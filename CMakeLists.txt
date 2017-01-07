@@ -1,17 +1,19 @@
-# thread-pool-cpp build script
-
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.3) # support visibility settings
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake/Modules")
 
-project(thread-pool-cpp VERSION 1.0.0)
-
-ADD_DEFINITIONS(-std=c++1y -Wall -Werror -O3)
+project(thread-pool-cpp VERSION 1.1.0)
 
 option(THREAD_POOL_CPP_BUILD_TESTS "Build tests." OFF)
 option(THREAD_POOL_CPP_BUILD_BENCHMARKS "Build benchmarks." OFF)
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/thread_pool)
+if(THREAD_POOL_CPP_BUILD_TESTS)
+  include(CTest)
+endif()
+
+# Variable used in: benchmark, tests
+set(THREAD_POOL_CPP_INC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include/")
+include_directories("${THREAD_POOL_CPP_INC_DIR}")
 
 # If true C++11 thread_local support exists, we will use it:
 include(thread_pool_has_thread_local_storage)
@@ -31,8 +33,20 @@ endif()
 # http://stackoverflow.com/a/11583676
 add_library(thread-pool-cpp INTERFACE)
 
-if(THREAD_POOL_HAS_THREAD_LOCAL_STORAGE)
-  target_compile_definitions(thread-pool-cpp INTERFACE THREAD_POOL_HAS_THREAD_LOCAL_STORAGE=1)
+option(THREAD_POOL_CPP_HAS_CPP14 "Has true C++14 support." ON)
+
+if(NOT MSVC)
+  if(THREAD_POOL_CPP_HAS_CPP14)
+    target_compile_definitions(thread-pool-cpp INTERFACE -std=c++14 -Wall -Werror -O3)
+  else()
+    target_compile_definitions(thread-pool-cpp INTERFACE -std=c++1y -Wall -Werror -O3)
+  endif()
+else()
+  if(THREAD_POOL_CPP_HAS_CPP14)
+    target_compile_definitions(thread-pool-cpp INTERFACE /std:c++14)
+  else()
+    target_compile_definitions(thread-pool-cpp INTERFACE /std:c++1y)
+  endif()
 endif()
 
 if(THREAD_POOL_CPP_BUILD_TESTS)
@@ -80,8 +94,8 @@ install(
   )
 
 install(
-  DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/thread_pool/ # Trailing slash is required
-  DESTINATION "${include_install_dir}/thread_pool" # match local layout
+  DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/thread_pool
+  DESTINATION "${include_install_dir}" 
   FILES_MATCHING PATTERN "*.h" PATTERN "*.hpp"
   )
 
