@@ -11,10 +11,6 @@ if(THREAD_POOL_CPP_BUILD_TESTS)
   include(CTest)
 endif()
 
-# Variable used in: benchmark, tests
-set(THREAD_POOL_CPP_INC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include/")
-include_directories("${THREAD_POOL_CPP_INC_DIR}")
-
 # If true C++11 thread_local support exists, we will use it:
 include(thread_pool_has_thread_local_storage)
 thread_pool_has_thread_local_storage(THREAD_POOL_HAS_THREAD_LOCAL_STORAGE)
@@ -32,6 +28,10 @@ endif()
 
 # http://stackoverflow.com/a/11583676
 add_library(thread-pool-cpp INTERFACE)
+
+# Variable used in: benchmark, tests
+set(THREAD_POOL_CPP_INC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include/")
+target_include_directories(thread-pool-cpp INTERFACE "$<BUILD_INTERFACE:${THREAD_POOL_CPP_INC_DIR}>")
 
 option(THREAD_POOL_CPP_HAS_CPP14 "Has true C++14 support." ON)
 
