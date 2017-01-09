@@ -30,8 +30,12 @@ endif()
 add_library(thread-pool-cpp INTERFACE)
 
 # Variable used in: benchmark, tests
-set(THREAD_POOL_CPP_INC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include/")
-target_include_directories(thread-pool-cpp INTERFACE "$<BUILD_INTERFACE:${THREAD_POOL_CPP_INC_DIR}>")
+set(THREAD_POOL_CPP_INC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include")
+target_include_directories(thread-pool-cpp
+  INTERFACE
+  "$<BUILD_INTERFACE:${THREAD_POOL_CPP_INC_DIR}>"
+  "$<INSTALL_INTERFACE:include>"
+  )
 
 option(THREAD_POOL_CPP_HAS_CPP14 "Has true C++14 support." ON)
 
