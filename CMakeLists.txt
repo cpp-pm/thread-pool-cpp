@@ -6,6 +6,7 @@ project(thread-pool-cpp VERSION 1.1.0)
 
 option(THREAD_POOL_CPP_BUILD_TESTS "Build tests." OFF)
 option(THREAD_POOL_CPP_BUILD_BENCHMARKS "Build benchmarks." OFF)
+option(THREAD_POOL_CPP_INSTALL "Install library." ON)
 
 if(THREAD_POOL_CPP_BUILD_TESTS)
   include(CTest)
@@ -59,6 +60,10 @@ endif()
 
 if(THREAD_POOL_CPP_BUILD_BENCHMARKS)
   add_subdirectory(benchmark)
+endif()
+
+if(NOT THREAD_POOL_CPP_INSTALL)
+  return()
 endif()
 
 #### install
