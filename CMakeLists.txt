@@ -40,19 +40,22 @@ target_include_directories(thread-pool-cpp
 
 option(THREAD_POOL_CPP_HAS_CPP14 "Has true C++14 support." ON)
 
-if(NOT MSVC)
-  if(THREAD_POOL_CPP_HAS_CPP14)
-    target_compile_options(thread-pool-cpp INTERFACE -std=c++14)
-  else()
-    target_compile_options(thread-pool-cpp INTERFACE -std=c++1y)
-  endif()
+if(THREAD_POOL_HAS_CPP14)
+  set(CMAKE_CXX_STANDARD 14)
 else()
-  if(THREAD_POOL_CPP_HAS_CPP14)
-    target_compile_options(thread-pool-cpp INTERFACE /std:c++14)
-  else()
-    target_compile_options(thread-pool-cpp INTERFACE /std:c++1y)
-  endif()
+  set(CMAKE_CXX_STANDARD 11)
 endif()
+
+target_compile_features(
+  thread-pool-cpp
+  INTERFACE
+  cxx_auto_type
+  cxx_nullptr
+  cxx_lambdas
+  cxx_lambda_init_captures
+  )
+
+message("CXX_STANDARD is .......... ${CXX_STANDARD}")
 
 if(THREAD_POOL_CPP_BUILD_TESTS)
   add_subdirectory(tests)
